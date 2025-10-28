@@ -74,7 +74,11 @@ public:
 	}
 
 	friend std::ostream& operator<<(std::ostream& os, const IdealBalancedTree& tree){
-		return print_helper(os, tree.root, 0);
+		os << "Right" << "\n_______________________" << std::endl;
+		print_helper(os, tree.root, 0);
+		os << "_______________________\n" << "Left"  << std::endl;
+
+		return os;
 	}
 
 	std::vector<int> rnl() const {
@@ -119,6 +123,7 @@ int main()
 
 	IdealBalancedTree tree(randomized);
 
+	std::cout << std::endl;
 	std::cout << "обычный вывод:" << std::endl;
 	std::cout << tree << std::endl;
 
