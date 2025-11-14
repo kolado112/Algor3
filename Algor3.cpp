@@ -42,20 +42,27 @@ private:
     }
 
 
-    static std::ostream& print_helper(std::ostream& os, const Node* root, int level=0) {
+    static std::ostream& print_helper(std::ostream& os, const Node* root, int level = 0) {
+        std::string delimeter = "\t|";
+
+        auto indent = [&](int n) {
+            std::string result;
+            for (int i = 0; i < n; ++i) result += delimeter;
+            return result;
+        };
+
         if (!root) {
-            os << std::string(level, '|') << "None" << '\n';
+            os << indent(level) << "None\n";
             return os;
         }
 
-        print_helper(os, root->left, level + 1);
-        os << std::string(level, '|') << root->data << '\n';
         print_helper(os, root->right, level + 1);
-        
-        
-        
+        os << indent(level) << root->data << '\n';
+        print_helper(os, root->left, level + 1);
+
         return os;
     }
+
 
     void rnl_helper(Node* node, std::vector<int>& result) const {
         if (!node) return;
@@ -64,7 +71,26 @@ private:
         result.push_back(node->data);
         rnl_helper(node->left, result);
     }
+    
+//    void lnr_helper(Node* node, std::vector<int>& result) const {
+//        if (!node) return;
+//
+//        lnr_helper(node->left, result);   // L
+//        result.push_back(node->data);     // N
+//        lnr_helper(node->right, result);  // R
+//    }
+    
+    void rln_helper(Node* node, std::vector<int>& result) const {
+        if (!node) return;
 
+        rln_helper(node->right, result);  // R
+        rln_helper(node->left, result);   // L
+        result.push_back(node->data);     // N
+    }
+
+
+
+        
     
 public:
     IdealBalancedTree() = delete;
@@ -74,9 +100,9 @@ public:
     }
 
     friend std::ostream& operator<<(std::ostream& os, const IdealBalancedTree& tree){
-        os << "Left" << "\n_______________________" << std::endl;
+        os << "Right" << "\n_______________________" << std::endl;
         print_helper(os, tree.root, 0);
-        os << "_______________________\n" << "Right"  << std::endl;
+        os << "_______________________\n" << "Left"  << std::endl;
 
         return os;
     }
@@ -88,7 +114,18 @@ public:
 
         return result;
     }
+    
+//    std::vector<int> lnr() const {
+//        std::vector<int> result;
+//        lnr_helper(root, result);
+//        return result;
+//    }
 
+    std::vector<int> rln() const {
+        std::vector<int> result;
+        rln_helper(root, result);
+        return result;
+    }
 
     ~IdealBalancedTree() {
         std::cout << "Удаление дерева..." << std::endl;
@@ -131,6 +168,21 @@ int main()
     for (auto it = vector.begin(); it != vector.end(); ++it) {
         std::cout << *it << " ";
     }
+    std::cout<<std::endl;
+    
+//    std::cout << "Симметричный обход (LNR):" << std::endl;
+//    auto inorder = tree.lnr();
+//    for (int val : inorder)
+//        std::cout << val << " ";
+//    std::cout << std::endl;
+    
+    std::cout << "Обход RLN:" << std::endl;
+    auto order = tree.rln();
+    for (int val : order)
+        std::cout << val << " ";
+    std::cout << std::endl;
+
+
 
     std::cout << std::endl;
     std::cout << std::endl;
